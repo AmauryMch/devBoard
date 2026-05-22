@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
-import { insertArticle } from "@/app/dashboard/articles/lib"
+import { insertArticle } from "@/services/articles"
 import { ArticleSchema, type ArticleInput } from "@/lib/validation"
 
 export type ArticleFormState = {

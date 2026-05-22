@@ -1,7 +1,7 @@
 import { Suspense } from "react"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { getAllArticles, fetchFullContent } from "../lib"
+import { getAllArticles, fetchFullContent } from "../../../../services/articles"
 import { ArticleSkeleton } from "./articleSkeleton"
 
 export default async function ArticleDetailPage({ params }: { params: Promise<{ slug: string }> }) {

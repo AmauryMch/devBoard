@@ -97,3 +97,7 @@ Utilisées pour les actions qui modifient des données côté utilisateur :
 
 ---
 
+Feat :
+
+- Regarder nextAuth pour l'authent
+- Il faut également faire la même architecture que dans le powerpoint de la seance deux

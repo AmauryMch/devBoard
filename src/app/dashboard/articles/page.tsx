@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { getAllArticles } from "./lib"
+import { getAllArticles } from "../../../services/articles"
 
 export default async function ArticlesPage() {
     const articles = await getAllArticles()
