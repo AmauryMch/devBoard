@@ -1,9 +1,20 @@
+import { Suspense } from "react"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getArticles, fetchFullContent } from "../lib"
+import { ArticleSkeleton } from "./articleSkeleton"
 
 export default async function ArticleDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params
+
+    return (
+        <Suspense fallback={<ArticleSkeleton />}>
+            <ArticleContent slug={slug} />
+        </Suspense>
+    )
+}
+
+async function ArticleContent({ slug }: { slug: string }) {
     const articles = await getArticles()
     const article = articles[Number(slug)]
 
