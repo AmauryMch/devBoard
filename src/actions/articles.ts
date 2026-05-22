@@ -2,59 +2,46 @@
 
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
-import type { Article } from "@/app/dashboard/articles/lib"
-
-const customArticles: Article[] = []
-
-export async function getCustomArticles(): Promise<Article[]> {
-    return customArticles
-}
+import { insertArticle } from "@/app/dashboard/articles/lib"
+import { ArticleSchema, type ArticleInput } from "@/lib/validation"
 
 export type ArticleFormState = {
     success: boolean
     message: string
-    errors?: {
-        title?: string
-        description?: string
-        url?: string
-        urlToImage?: string
-        category?: string
-        source?: string
-    }
+    errors?: Partial<Record<keyof ArticleInput, string>>
 }
 
 export async function createArticle(
     _prev: ArticleFormState,
     formData: FormData
 ): Promise<ArticleFormState> {
-    const title = formData.get("title")?.toString().trim() ?? ""
-    const description = formData.get("description")?.toString().trim() ?? ""
-    const url = formData.get("url")?.toString().trim() ?? ""
-    const urlToImage = formData.get("urlToImage")?.toString().trim() ?? ""
-    const category = formData.get("category")?.toString().trim() ?? ""
-    const source = formData.get("source")?.toString().trim() ?? ""
+    const raw = {
+        title: formData.get("title"),
+        description: formData.get("description"),
+        url: formData.get("url"),
+        urlToImage: formData.get("urlToImage"),
+        category: formData.get("category"),
+        source: formData.get("source"),
+    }
 
-    const errors: ArticleFormState["errors"] = {}
+    const result = ArticleSchema.safeParse(raw)
 
-    if (!title) errors.title = "Le titre est requis."
-    if (!url) errors.url = "L'URL est requise."
-    else if (!/^https?:\/\/.+/.test(url)) errors.url = "L'URL n'est pas valide."
-    if (!category) errors.category = "La catégorie est requise."
-    if (!source) errors.source = "La source est requise."
-
-    if (Object.keys(errors).length > 0) {
+    if (!result.success) {
+        const errors: ArticleFormState["errors"] = {}
+        for (const [k, v] of Object.entries(result.error.flatten().fieldErrors)) {
+            if (v?.[0]) errors[k as keyof ArticleInput] = v[0]
+        }
         return { success: false, message: "Formulaire invalide.", errors }
     }
 
-    // TODO: remplacer par prisma.article.create() en production
-    customArticles.unshift({
+    const { title, description, url, urlToImage, source } = result.data
+    insertArticle({
         title,
-        description: description || null,
+        description: description ?? null,
         url,
-        urlToImage: urlToImage || null,
+        urlToImage: urlToImage ?? null,
         publishedAt: new Date().toISOString(),
         source: { name: source },
-        content: null,
     })
 
     revalidatePath("/dashboard/articles")

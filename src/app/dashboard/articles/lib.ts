@@ -8,6 +8,23 @@ export type Article = {
     content: string | null
 }
 
+const MAX_CUSTOM_ARTICLES = 100
+const customArticles: Article[] = []
+
+export function getCustomArticles(): Article[] {
+    return customArticles
+}
+
+export function insertArticle(article: Omit<Article, "content">): void {
+    if (customArticles.length >= MAX_CUSTOM_ARTICLES) customArticles.pop()
+    customArticles.unshift({ ...article, content: null })
+}
+
+export async function getAllArticles(): Promise<Article[]> {
+    const [news, custom] = await Promise.all([getArticles(), Promise.resolve(getCustomArticles())])
+    return [...custom, ...news]
+}
+
 export async function getArticles(): Promise<Article[]> {
     const apiKey = process.env.NEWS_API_KEY
     const res = await fetch(

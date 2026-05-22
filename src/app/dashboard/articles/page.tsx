@@ -1,10 +1,8 @@
 import Link from "next/link"
-import { getArticles } from "./lib"
-import { getCustomArticles } from "@/actions/articles"
+import { getAllArticles } from "./lib"
 
 export default async function ArticlesPage() {
-    const [newsArticles, customArticles] = await Promise.all([getArticles(), getCustomArticles()])
-    const articles = [...customArticles, ...newsArticles]
+    const articles = await getAllArticles()
 
     return (
         <div className="p-8">

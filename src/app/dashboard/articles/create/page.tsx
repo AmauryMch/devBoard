@@ -2,8 +2,7 @@
 
 import { useActionState, useState } from "react"
 import { createArticle, type ArticleFormState } from "@/actions/articles"
-
-const CATEGORIES = ["Web", "IA", "Cybersécurité", "Cloud", "Mobile"]
+import { CATEGORIES } from "@/lib/validation"
 
 const initialState: ArticleFormState = { success: false, message: "" }
 
