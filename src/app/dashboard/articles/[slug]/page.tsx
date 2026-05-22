@@ -2,6 +2,7 @@ import { Suspense } from "react"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getArticles, fetchFullContent } from "../lib"
+import { getCustomArticles } from "@/actions/articles"
 import { ArticleSkeleton } from "./articleSkeleton"
 
 export default async function ArticleDetailPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -15,7 +16,8 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
 }
 
 async function ArticleContent({ slug }: { slug: string }) {
-    const articles = await getArticles()
+    const [newsArticles, customArticles] = await Promise.all([getArticles(), getCustomArticles()])
+    const articles = [...customArticles, ...newsArticles]
     const article = articles[Number(slug)]
 
     if (!article) notFound()

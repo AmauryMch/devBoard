@@ -1,14 +1,24 @@
 import Link from "next/link"
 import { getArticles } from "./lib"
+import { getCustomArticles } from "@/actions/articles"
 
 export default async function ArticlesPage() {
-    const articles = await getArticles()
+    const [newsArticles, customArticles] = await Promise.all([getArticles(), getCustomArticles()])
+    const articles = [...customArticles, ...newsArticles]
 
     return (
         <div className="p-8">
-            <div className="mb-8">
-                <h1 className="text-xl font-bold tracking-widest uppercase text-white">Articles</h1>
-                <p className="text-zinc-500 text-xs mt-1 tracking-wide">Veille technologique — Dev & Informatique</p>
+            <div className="mb-8 flex items-center justify-between">
+                <div>
+                    <h1 className="text-xl font-bold tracking-widest uppercase text-white">Articles</h1>
+                    <p className="text-zinc-500 text-xs mt-1 tracking-wide">Veille technologique — Dev & Informatique</p>
+                </div>
+                <Link
+                    href="/dashboard/articles/create"
+                    className="text-xs uppercase tracking-widest border border-zinc-700 px-4 py-2 rounded text-zinc-400 hover:text-white hover:border-zinc-500 transition-colors"
+                >
+                    + Nouvel article
+                </Link>
             </div>
 
             {articles.length === 0 ? (
@@ -21,15 +31,21 @@ export default async function ArticlesPage() {
                             href={`/dashboard/articles/${i}`}
                             className="flex flex-col border border-zinc-800 rounded bg-zinc-900 hover:border-zinc-600 hover:bg-zinc-800 transition-colors overflow-hidden group"
                         >
-                            {article.urlToImage && (
-                                <div className="h-40 overflow-hidden">
+                            <div className="h-40 overflow-hidden shrink-0">
+                                {article.urlToImage ? (
                                     <img
                                         src={article.urlToImage}
                                         alt=""
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                     />
-                                </div>
-                            )}
+                                ) : (
+                                    <div className="w-full h-full bg-zinc-800 flex items-center justify-center">
+                                        <span className="text-xs text-zinc-600 uppercase tracking-widest">
+                                            {article.source.name}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
                             <div className="flex flex-col flex-1 p-4 gap-2">
                                 <div className="flex items-center justify-between gap-2">
                                     <span className="text-xs text-zinc-500 uppercase tracking-widest truncate">
