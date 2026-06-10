@@ -8,13 +8,16 @@ export default function Error({
     reset: () => void;
 }) {
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-red-50">
-            <div className="bg-white p-8 rounded shadow-lg text-center">
-                <h1 className="text-4xl font-bold text-red-600 mb-4">⚠️ Erreur</h1>
-                <p className="text-gray-700 mb-6">{error.message || "Une erreur est survenue"}</p>
+        <div className="flex min-h-[70vh] items-center justify-center bg-zinc-950 text-white font-mono px-4">
+            <div className="w-full max-w-sm border border-zinc-800 rounded-lg p-8 flex flex-col items-center gap-4 text-center">
+                <span className="text-xs uppercase tracking-widest text-red-400">Erreur</span>
+                <h1 className="text-2xl font-bold">Une erreur est survenue</h1>
+                <p className="text-sm text-zinc-500">
+                    {error.message || "Quelque chose s'est mal passé."}
+                </p>
                 <button
                     onClick={() => reset()}
-                    className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+                    className="mt-2 w-full px-4 py-2 rounded bg-white text-zinc-950 text-sm font-semibold hover:bg-zinc-200 transition-colors"
                 >
                     Réessayer
                 </button>
