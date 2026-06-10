@@ -56,11 +56,11 @@ Utilisées pour les actions qui modifient des données :
 
 ## Features MVP
 
-- **Authentification** — Inscription, connexion / déconnexion, gestion de session
-- **Articles** — Liste des articles récents, titre / description / catégorie / source / date, page détail
-- **Catégories** — Filtrer par Web, IA, Cybersécurité, Cloud, Mobile
-- **Administration** — Ajouter, modifier, supprimer un article
-- **Favoris** — Ajouter / retirer un article, consulter sa liste
+- **Authentification** — Connexion GitHub OAuth ou email/mot de passe, déconnexion, gestion de session JWT
+- **Articles** — Liste des articles récents (NewsAPI), titre / description / source / date, page détail avec contenu scrappé
+- **Catégories** — Filtrer par Web, IA, Cybersécurité, Cloud, Mobile (filtrage client-side par mots-clés)
+- **Administration** — Ajouter un article (réservé admin / editor), accès restreint par rôle via middleware
+- **Favoris** — Ajouter / retirer un article depuis la liste ou le dashboard, persistés en base par utilisateur
 
 ---
 
