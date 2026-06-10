@@ -15,7 +15,8 @@ Outil de veille technologique permettant de monter en compétences sur les sujet
 ## Stack
 
 - **Framework** — Next.js 15 (App Router)
-- **Auth** — NextAuth (GitHub OAuth)
+- **Auth** — NextAuth (GitHub OAuth + Credentials)
+- **Base de données** — SQLite via Prisma ORM
 - **Data** — NewsAPI
 - **Style** — Tailwind CSS
 
@@ -70,17 +71,17 @@ Utilisées pour les actions qui modifient des données côté utilisateur :
 
 | # | User Story | Priorité | Fait |
 |:-:|---|:-:|:-:|
-| 1 | En tant que visiteur, je veux voir la landing avec quelques articles pour comprendre ce qu'est DevBoard | P0 | [ ]
-| 2 | En tant que visiteur, je veux me connecter avec GitHub pour accéder au contenu complet | P0 | [ ]
-| 3 | En tant qu'utilisateur connecté, je veux voir la liste complète des articles de veille | P0 | [ ]
-| 4 | En tant qu'utilisateur connecté, je veux filtrer les articles par catégorie (Web, IA, Cybersécurité, Cloud, Mobile) | P2 | [ ]
-| 5 | En tant qu'utilisateur connecté, je veux voir le détail d'un article | P0 | [ ]
-| 6 | En tant qu'utilisateur connecté, je veux ajouter un article en favori et le retrouver dans ma liste | P1 | [ ]
-| 7 | En tant qu'utilisateur connecté, je veux écrire une note sur un article pour garder une trace de ma veille | P1 | [ ]
-| 8 | En tant qu'utilisateur connecté, je veux mettre à jour mon profil | P1 | [ ]
-| 9 | En tant qu'utilisateur, je veux que le partage d'un article génère une preview propre | P2 | [ ]
-| 10 | En tant que développeur, je veux des scores Lighthouse > 90 documentés dans le README | P2 | [ ]
-| 11 | En tant que développeur, je veux avoir une page d'Erreur complète | P0 | [ ]
+| 1 | En tant que visiteur, je veux voir la landing avec quelques articles pour comprendre ce qu'est DevBoard | P0 | [ ] |
+| 2 | En tant que visiteur, je veux me connecter avec GitHub pour accéder au contenu complet | P0 | [x] |
+| 3 | En tant qu'utilisateur connecté, je veux voir la liste complète des articles de veille | P0 | [x] |
+| 4 | En tant qu'utilisateur connecté, je veux filtrer les articles par catégorie (Web, IA, Cybersécurité, Cloud, Mobile) | P2 | [x] |
+| 5 | En tant qu'utilisateur connecté, je veux voir le détail d'un article | P0 | [x] |
+| 6 | En tant qu'utilisateur connecté, je veux ajouter un article en favori et le retrouver dans ma liste | P1 | [x] |
+| 7 | En tant qu'utilisateur connecté, je veux écrire une note sur un article pour garder une trace de ma veille | P1 | [ ] |
+| 8 | En tant qu'utilisateur connecté, je veux mettre à jour mon profil | P1 | [ ] |
+| 9 | En tant qu'utilisateur, je veux que le partage d'un article génère une preview propre | P2 | [ ] |
+| 10 | En tant que développeur, je veux des scores Lighthouse > 90 documentés dans le README | P2 | [ ] |
+| 11 | En tant que développeur, je veux avoir une page d'Erreur complète | P0 | [x] |
 
 ---
 
