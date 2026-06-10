@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { signIn, signOut, useSession } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react"
 
 const navItems = [
     {
@@ -32,6 +32,7 @@ const navItems = [
         href: "/dashboard/users",
         label: "Utilisateurs",
         requiresAuth: true,
+        requiresAdmin: true,
         icon: (
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="9" cy="7" r="4" /><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
@@ -55,7 +56,11 @@ const navItems = [
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const { data: session, status } = useSession()
     const isAuthenticated = status === "authenticated"
-    const visibleNavItems = navItems.filter((item) => !item.requiresAuth || isAuthenticated)
+    const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin"
+    const visibleNavItems = navItems.filter((item) => {
+        if (item.requiresAdmin) return isAdmin
+        return !item.requiresAuth || isAuthenticated
+    })
 
     return (
         <div className="flex min-h-screen bg-zinc-950 text-white font-mono">
@@ -87,7 +92,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
                 <header className="h-14 border-b border-zinc-800 flex items-center justify-between px-8 shrink-0">
                     <p className="text-xs text-zinc-500 tracking-widest uppercase">
-                        {isAuthenticated ? "Espace Admin" : "Espace public"}
                     </p>
                     {isAuthenticated ? (
                         <div className="flex items-center gap-3">
@@ -102,12 +106,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             </button>
                         </div>
                     ) : (
-                        <button
-                            onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
+                        <Link
+                            href="/login"
                             className="text-xs uppercase tracking-widest border border-zinc-700 px-3 py-1.5 rounded text-zinc-400 hover:text-white hover:border-zinc-500 transition-colors"
                         >
                             Connexion
-                        </button>
+                        </Link>
                     )}
                 </header>
 
