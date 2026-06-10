@@ -84,19 +84,9 @@ Utilisées pour les actions qui modifient des données :
 
 ## Stratégie de mise en cache
 
-| Endpoint | Fonction | Stratégie | Raison |
+| Endpoint / Donnée | Fonction | Stratégie | Raison |
 |---|---|---|---|
-| `newsapi.org/v2/top-headlines` | `getArticles()` | `revalidate: 3600` | Articles publics qui changent lentement — évite de re-fetch newsAPI à chaque visite, conforme au cahier des charges (*"revalider toutes les heures"*) |
-| URL externe de l'article | `fetchFullContent(url)` | `revalidate: 3600` ⚠️ | Scraping HTML d'un article externe — **à corriger** en `cache: 'no-store'` car le cahier des charges dit *"la page article individuelle est toujours fraîche"* |
-| `newsapi.org` — Open Graph | `generateOgImage()` | `revalidate: 86400` | Image statique par article, le contenu ne change jamais après publication |
-| Lecture des favoris | `getFavorites(userId)` | Cache taguée `['favorites', userId]` | Invalidée via `revalidateTag` après chaque mutation (ajout / suppression) |
-| Lecture des notes | `getNotes(userId)` | Cache taguée `['notes', userId]` | Invalidée via `revalidateTag` après chaque Server Action d'écriture |
-| Profil utilisateur | `getProfile(userId)` | `cache: 'no-store'` | Données personnelles — doit toujours refléter l'état réel en base |
-| Session auth NextAuth | Middleware NextAuth | Géré par NextAuth | Pas de `fetch` manuel, NextAuth gère son propre cache de session |
-
----
-
-Feat :
-
-- Regarder nextAuth pour l'authent
-- Il faut également faire la même architecture que dans le powerpoint de la seance deux
+| `newsapi.org/v2/top-headlines` | `getArticles()` | `revalidate: 3600` | Articles publics qui changent lentement — évite de re-fetch NewsAPI à chaque visite |
+| URL externe de l'article | `fetchFullContent(url)` | `revalidate: 3600` ⚠️ | Scraping HTML — **à corriger** en `cache: 'no-store'` pour que le contenu soit toujours frais |
+| Favoris utilisateur | `getUserFavorites()` | `revalidatePath('/dashboard')` | Invalidation de la page après chaque ajout / suppression via Server Action |
+| Session auth | Middleware NextAuth | Géré par NextAuth (JWT) | Pas de `fetch` manuel, NextAuth gère son propre cache de session |
