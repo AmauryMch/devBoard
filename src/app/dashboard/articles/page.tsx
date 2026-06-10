@@ -1,10 +1,9 @@
-import Image from "next/image"
 import Link from "next/link"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { getAllArticles } from "../../../services/articles"
 import { getUserFavoriteUrls } from "@/actions/favorites"
-import { FavoriteButton } from "@/components/FavoriteButton"
+import { ArticlesGrid } from "@/components/ArticlesGrid"
 
 export default async function ArticlesPage() {
     const [articles, favoriteUrls, session] = await Promise.all([
@@ -36,55 +35,7 @@ export default async function ArticlesPage() {
             {articles.length === 0 ? (
                 <p className="text-zinc-500 text-sm">Impossible de charger les articles.</p>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                    {articles.map((article, i) => (
-                        <div key={i} className="relative group">
-                            <Link
-                                href={`/dashboard/articles/${i}`}
-                                className="flex flex-col border border-zinc-800 rounded bg-zinc-900 hover:border-zinc-600 hover:bg-zinc-800 transition-colors overflow-hidden"
-                            >
-                                <div className="relative h-40 overflow-hidden shrink-0">
-                                    {article.urlToImage ? (
-                                        <Image
-                                            src={article.urlToImage}
-                                            alt={article.title}
-                                            fill
-                                            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-                                            className="object-cover group-hover:scale-105 transition-transform duration-300"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full bg-zinc-800 flex items-center justify-center">
-                                            <span className="text-xs text-zinc-600 uppercase tracking-widest">
-                                                {article.source.name}
-                                            </span>
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="flex flex-col flex-1 p-4 gap-2">
-                                    <div className="flex items-center justify-between gap-2">
-                                        <span className="text-xs text-zinc-500 uppercase tracking-widest truncate">
-                                            {article.source.name}
-                                        </span>
-                                        <span className="text-xs text-zinc-600 shrink-0">
-                                            {new Date(article.publishedAt).toLocaleDateString("fr-FR")}
-                                        </span>
-                                    </div>
-                                    <p className="text-sm text-white font-medium leading-snug line-clamp-3">
-                                        {article.title}
-                                    </p>
-                                    {article.description && (
-                                        <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">
-                                            {article.description}
-                                        </p>
-                                    )}
-                                </div>
-                            </Link>
-                            <div className="absolute top-2 right-2 z-10">
-                                <FavoriteButton article={article} isFavorited={favoriteUrls.includes(article.url)} />
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                <ArticlesGrid articles={articles} favoriteUrls={favoriteUrls} />
             )}
         </div>
     )
