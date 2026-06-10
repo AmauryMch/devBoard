@@ -13,12 +13,28 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
+  id        String     @id @default(cuid())
   name      String?
-  email     String   @unique
+  email     String     @unique
   password  String
   image     String?
-  role      String   @default("user")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  role      String     @default("user")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  favorites Favorite[]
+}
+
+model Favorite {
+  id                 String   @id @default(cuid())
+  userId             String
+  articleUrl         String
+  articleTitle       String
+  articleDescription String?
+  articleImage       String?
+  articleSource      String
+  articlePublishedAt String
+  createdAt          DateTime @default(now())
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, articleUrl])
 }
