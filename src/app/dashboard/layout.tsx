@@ -1,9 +1,13 @@
+"use client"
+
 import Link from "next/link"
+import { signIn, signOut, useSession } from "next-auth/react"
 
 const navItems = [
     {
         href: "/dashboard",
         label: "Accueil",
+        requiresAuth: false,
         icon: (
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" />
@@ -12,18 +16,9 @@ const navItems = [
         ),
     },
     {
-        href: "/dashboard/users",
-        label: "Utilisateurs",
-        icon: (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="9" cy="7" r="4" /><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
-                <path d="M16 3.13a4 4 0 0 1 0 7.75" /><path d="M21 21v-2a4 4 0 0 0-3-3.85" />
-            </svg>
-        ),
-    },
-    {
         href: "/dashboard/articles",
         label: "Articles",
+        requiresAuth: false,
         icon: (
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -34,8 +29,20 @@ const navItems = [
         ),
     },
     {
+        href: "/dashboard/users",
+        label: "Utilisateurs",
+        requiresAuth: true,
+        icon: (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="9" cy="7" r="4" /><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" /><path d="M21 21v-2a4 4 0 0 0-3-3.85" />
+            </svg>
+        ),
+    },
+    {
         href: "/dashboard/parameters",
         label: "Paramètres",
+        requiresAuth: true,
         icon: (
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="3" />
@@ -46,6 +53,10 @@ const navItems = [
 ]
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+    const { data: session, status } = useSession()
+    const isAuthenticated = status === "authenticated"
+    const visibleNavItems = navItems.filter((item) => !item.requiresAuth || isAuthenticated)
+
     return (
         <div className="flex min-h-screen bg-zinc-950 text-white font-mono">
             <aside className="w-56 shrink-0 border-r border-zinc-800 flex flex-col">
@@ -55,7 +66,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </div>
 
                 <nav className="flex-1 px-3 py-4 flex flex-col gap-1">
-                    {navItems.map(({ href, label, icon }) => (
+                    {visibleNavItems.map(({ href, label, icon }) => (
                         <Link
                             key={href}
                             href={href}
@@ -74,8 +85,30 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
             <div className="flex-1 flex flex-col">
 
-                <header className="h-14 border-b border-zinc-800 flex items-center px-8 shrink-0">
-                    <p className="text-xs text-zinc-500 tracking-widest uppercase">Espace Admin</p>
+                <header className="h-14 border-b border-zinc-800 flex items-center justify-between px-8 shrink-0">
+                    <p className="text-xs text-zinc-500 tracking-widest uppercase">
+                        {isAuthenticated ? "Espace Admin" : "Espace public"}
+                    </p>
+                    {isAuthenticated ? (
+                        <div className="flex items-center gap-3">
+                            <span className="text-xs text-zinc-400">
+                                {session.user?.name ?? session.user?.email}
+                            </span>
+                            <button
+                                onClick={() => signOut({ callbackUrl: "/dashboard" })}
+                                className="text-xs uppercase tracking-widest border border-zinc-700 px-3 py-1.5 rounded text-zinc-400 hover:text-white hover:border-zinc-500 transition-colors"
+                            >
+                                Déconnexion
+                            </button>
+                        </div>
+                    ) : (
+                        <button
+                            onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
+                            className="text-xs uppercase tracking-widest border border-zinc-700 px-3 py-1.5 rounded text-zinc-400 hover:text-white hover:border-zinc-500 transition-colors"
+                        >
+                            Connexion
+                        </button>
+                    )}
                 </header>
 
                 <main className="flex-1 overflow-auto">
