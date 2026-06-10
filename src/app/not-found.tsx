@@ -2,15 +2,19 @@ import Link from 'next/link';
 
 export default function NotFound() {
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-yellow-50">
-            <div className="bg-white p-8 rounded shadow-lg text-center">
-                <h1 className="text-6xl font-bold text-yellow-600 mb-4">404</h1>
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">Page non trouvée</h2>
+        <div className="flex min-h-screen items-center justify-center bg-zinc-950 text-white font-mono px-4">
+            <div className="w-full max-w-sm border border-zinc-800 rounded-lg p-8 flex flex-col items-center gap-4 text-center">
+                <span className="text-xs uppercase tracking-widest text-zinc-500">Erreur 404</span>
+                <h1 className="text-5xl font-bold">404</h1>
+                <h2 className="text-sm uppercase tracking-widest text-zinc-400">Page non trouvée</h2>
+                <p className="text-sm text-zinc-500">
+                    La page que vous recherchez n&apos;existe pas ou a été déplacée.
+                </p>
                 <Link
                     href="/dashboard"
-                    className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+                    className="mt-2 w-full px-4 py-2 rounded bg-white text-zinc-950 text-sm font-semibold hover:bg-zinc-200 transition-colors text-center"
                 >
-                    Retour au Dashboard
+                    Retour au dashboard
                 </Link>
             </div>
         </div>
