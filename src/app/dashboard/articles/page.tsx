@@ -1,3 +1,4 @@
+import Image from "next/image"
 import Link from "next/link"
 import { getAllArticles } from "../../../services/articles"
 
@@ -29,12 +30,14 @@ export default async function ArticlesPage() {
                             href={`/dashboard/articles/${i}`}
                             className="flex flex-col border border-zinc-800 rounded bg-zinc-900 hover:border-zinc-600 hover:bg-zinc-800 transition-colors overflow-hidden group"
                         >
-                            <div className="h-40 overflow-hidden shrink-0">
+                            <div className="relative h-40 overflow-hidden shrink-0">
                                 {article.urlToImage ? (
-                                    <img
+                                    <Image
                                         src={article.urlToImage}
-                                        alt=""
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                        alt={article.title}
+                                        fill
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                                        className="object-cover group-hover:scale-105 transition-transform duration-300"
                                     />
                                 ) : (
                                     <div className="w-full h-full bg-zinc-800 flex items-center justify-center">
