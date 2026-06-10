@@ -25,35 +25,32 @@ Outil de veille technologique permettant de monter en compétences sur les sujet
 ## Contraintes techniques
 
 ### Layouts imbriqués
-Architecture en 3 niveaux :
-- Le layout public affiche un header avec un CTA "Se connecter" et un footer
-- Le layout privé ajoute une sidebar de navigation et vérifie la session au niveau du layout
+Architecture en 2 niveaux :
+- Le layout racine (`app/layout.tsx`) — providers globaux (NextAuth session)
+- Le layout dashboard (`app/dashboard/layout.tsx`) — sidebar de navigation, header avec session utilisateur, vérifie la session via le middleware
 
 ### Data Fetching
-- Les articles proviennent de l'API NewsAPI (articles récupérés par catégories)
-- La landing affiche les derniers articles avec du cache (revalidation toutes les heures)
-- La page article individuelle est toujours fraîche
+- Les articles proviennent de l'API NewsAPI (`top-headlines?category=technology`)
+- Les résultats sont mis en cache avec `revalidate: 3600` (revalidation toutes les heures)
+- Le contenu complet d'un article est scrappé à la demande avec `revalidate: 3600` ⚠️ *(à passer en `cache: 'no-store'` pour toujours être frais)*
 
 ### Server Actions
-Utilisées pour les actions qui modifient des données côté utilisateur :
-- Créer et enregistrer une note sur un article lu
-- Mettre à jour son profil
-- La logique reste côté serveur
-
-### Route Handler
-- Un endpoint dédié pour générer les images Open Graph de chaque article
-- Récupère les données NewsAPI et génère un preview propre pour le partage
+Utilisées pour les actions qui modifient des données :
+- Créer un article (`src/actions/articles.ts`) — insertion en mémoire + revalidation
+- Ajouter / retirer un favori (`src/actions/favorites.ts`) — écriture Prisma + `revalidatePath`
+- La logique reste entièrement côté serveur
 
 ### Auth NextAuth
-- Connexion via GitHub OAuth
-- Un middleware protège toutes les routes privées
-- Redirection automatique vers le login si non connecté
+- Connexion via GitHub OAuth et via email / mot de passe (CredentialsProvider + bcrypt)
+- Les utilisateurs GitHub sont automatiquement créés en base à la première connexion
+- Un middleware protège toutes les routes `/dashboard/**` et `/api/**` (hors auth)
+- Contrôle d'accès par rôle : `/dashboard/users/**` réservé aux admins, `/dashboard/articles/create` aux admins et editors
 
 ### Optimisations mesurables
-- Images des articles optimisées via `next/image`
+- Images des articles optimisées via `next/image` (remote patterns ouverts)
 - Mise en cache des résultats NewsAPI, évite de re-fetch à chaque visite
-- Skeleton loaders sur les listes d'articles
-- ISR sur la landing, limite les appels à l'API externe
+- Skeleton loader sur la page détail d'un article (`articleSkeleton.tsx`)
+- Mises à jour optimistes (`useOptimistic`) sur le bouton favori — feedback instantané sans attendre le serveur
 
 ---
 
