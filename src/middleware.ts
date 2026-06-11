@@ -1,25 +1,44 @@
 import withAuth from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
+// Routes réservées aux utilisateurs connectés (rôle "user" minimum)
+const authRoutes = ["/dashboard/parameters"];
+// Routes réservées aux administrateurs
+const adminRoutes = ["/dashboard/users"];
+// Routes réservées aux users et administrateurs
+const editorRoutes = ["/dashboard/articles/create"];
+
 export default withAuth(
     function middleware(req) {
         const { pathname } = req.nextUrl;
         const role = req.nextauth.token?.role as string | undefined;
 
-        const isUsersRoute = pathname.startsWith("/dashboard/users");
-        const isCreateArticleRoute = pathname.startsWith("/dashboard/articles/create");
+        const isAdminRoute = adminRoutes.some((r) => pathname.startsWith(r));
+        const isEditorRoute = editorRoutes.some((r) => pathname.startsWith(r));
 
-        if (isUsersRoute && role !== "admin") {
+        if (isAdminRoute && role !== "admin") {
             return NextResponse.redirect(new URL("/dashboard", req.url));
         }
 
-        if (isCreateArticleRoute && role !== "admin" && role !== "editor") {
+        if (isEditorRoute && role !== "admin" && role !== "editor") {
             return NextResponse.redirect(new URL("/dashboard", req.url));
         }
 
         return NextResponse.next();
     },
     {
+        callbacks: {
+            // Détermine si la requête peut continuer. Sans connexion requise,
+            // l'accès invité est autorisé ; sinon un token est exigé (redirection /login).
+            authorized: ({ token, req }) => {
+                const { pathname } = req.nextUrl;
+                const requiresAuth = [...authRoutes, ...adminRoutes, ...editorRoutes].some(
+                    (r) => pathname.startsWith(r)
+                );
+                if (!requiresAuth) return true;
+                return token != null;
+            },
+        },
         pages: {
             signIn: "/login",
         },
