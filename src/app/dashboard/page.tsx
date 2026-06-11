@@ -3,6 +3,7 @@ import Link from "next/link"
 import { getAllArticles } from "@/services/articles"
 import { getUserFavorites, getUserFavoriteUrls } from "@/actions/favorites"
 import { FavoriteButton } from "@/components/FavoriteButton"
+import { ArticleImage } from "@/components/ArticleImage"
 
 export default async function Dashboard() {
     const [articles, favoriteUrls, favorites] = await Promise.all([
@@ -93,10 +94,12 @@ export default async function Dashboard() {
                                 >
                                     <div className="relative h-40 overflow-hidden shrink-0">
                                         {fav.articleImage ? (
-                                            <img
+                                            <ArticleImage
                                                 src={fav.articleImage}
                                                 alt={fav.articleTitle}
-                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                sourceName={fav.articleSource}
+                                                sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                                                className="object-cover group-hover:scale-105 transition-transform duration-300"
                                             />
                                         ) : (
                                             <div className="w-full h-full bg-zinc-800 flex items-center justify-center">
