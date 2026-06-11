@@ -1,6 +1,7 @@
 import { z } from "zod"
+import { CATEGORIES } from "@/lib/categories"
 
-export const CATEGORIES = ["Web", "IA", "Cybersécurité", "Cloud", "Mobile"] as const
+export { CATEGORIES }
 
 export const ArticleSchema = z.object({
     title: z.string().min(1, "Le titre est requis."),

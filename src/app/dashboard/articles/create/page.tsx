@@ -2,13 +2,15 @@
 
 import { useActionState, useState } from "react"
 import { createArticle, type ArticleFormState } from "@/actions/articles"
-import { CATEGORIES } from "@/lib/validation"
+import { CATEGORIES } from "@/lib/categories"
+import Image from "next/image"
 
 const initialState: ArticleFormState = { success: false, message: "" }
 
 export default function CreateArticlePage() {
     const [state, action, pending] = useActionState(createArticle, initialState)
     const [imagePreview, setImagePreview] = useState("")
+    const [imageError, setImageError] = useState(false)
 
     return (
         <div className="p-8 max-w-xl">
@@ -25,17 +27,26 @@ export default function CreateArticlePage() {
                         placeholder="https://... (URL de l'image)"
                         className={input(!!state.errors?.urlToImage)}
                         value={imagePreview}
-                        onChange={(e) => setImagePreview(e.target.value)}
+                        onChange={(e) => {
+                            setImagePreview(e.target.value)
+                            setImageError(false)
+                        }}
                     />
-                    {imagePreview && (
-                        <div className="mt-2 h-40 rounded overflow-hidden border border-zinc-800">
-                            <img
+                    {imagePreview && !imageError && (
+                        <div className="mt-2 relative h-40 rounded overflow-hidden border border-zinc-800">
+                            <Image
                                 src={imagePreview}
                                 alt="Prévisualisation"
-                                className="w-full h-full object-cover"
-                                onError={(e) => (e.currentTarget.style.display = "none")}
+                                fill
+                                className="object-cover"
+                                onError={() => setImageError(true)}
                             />
                         </div>
+                    )}
+                    {imagePreview && imageError && (
+                        <p className="mt-2 text-xs text-zinc-600">
+                            Impossible de charger l&apos;aperçu de l&apos;image.
+                        </p>
                     )}
                 </Field>
 
