@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import { insertArticle } from "@/services/articles"
 import { ArticleSchema, type ArticleInput } from "@/lib/validation"
+import { requireRole } from "@/lib/session"
 
 export type ArticleFormState = {
     success: boolean
@@ -15,6 +16,8 @@ export async function createArticle(
     _prev: ArticleFormState,
     formData: FormData
 ): Promise<ArticleFormState> {
+    await requireRole("admin", "editor")
+
     const raw = {
         title: formData.get("title"),
         description: formData.get("description"),
