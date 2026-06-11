@@ -1,7 +1,7 @@
 "use client"
 
 import { useOptimistic, useTransition } from "react"
-import { toggleFavorite } from "@/actions/favorites"
+import { useRouter } from "next/navigation"
 import type { Article } from "@/services/articles"
 
 type Props = {
@@ -10,6 +10,7 @@ type Props = {
 }
 
 export function FavoriteButton({ article, isFavorited }: Props) {
+    const router = useRouter()
     const [optimisticFavorited, setOptimisticFavorited] = useOptimistic(isFavorited)
     const [isPending, startTransition] = useTransition()
 
@@ -20,7 +21,17 @@ export function FavoriteButton({ article, isFavorited }: Props) {
                 e.stopPropagation()
                 startTransition(async () => {
                     setOptimisticFavorited(!optimisticFavorited)
-                    await toggleFavorite(article)
+                    const res = await fetch("/api/favorites", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(article),
+                    })
+                    // Invité : le middleware redirige la requête vers /login
+                    if (res.redirected || res.status === 401) {
+                        router.push("/login")
+                        return
+                    }
+                    router.refresh()
                 })
             }}
             disabled={isPending}
