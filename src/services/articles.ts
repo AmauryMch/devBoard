@@ -27,8 +27,11 @@ export async function getAllArticles(): Promise<Article[]> {
 
 export async function getArticles(): Promise<Article[]> {
     const apiKey = process.env.NEWS_API_KEY
+    const query = encodeURIComponent(
+        'programming OR "software development" OR javascript OR typescript OR "artificial intelligence" OR "machine learning" OR cybersecurity OR "cloud computing" OR devops OR kubernetes OR "mobile development"'
+    )
     const res = await fetch(
-        `https://newsapi.org/v2/top-headlines?category=technology&language=en&pageSize=20&apiKey=${apiKey}`,
+        `https://newsapi.org/v2/everything?q=${query}&language=en&sortBy=publishedAt&pageSize=100&apiKey=${apiKey}`,
         { next: { revalidate: 3600 } }
     )
     if (!res.ok) throw new Error(`NewsAPI error: ${res.status}`)

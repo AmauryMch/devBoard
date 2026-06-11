@@ -1,17 +1,14 @@
+import { Suspense } from "react"
 import Link from "next/link"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { getAllArticles } from "../../../services/articles"
 import { getUserFavoriteUrls } from "@/actions/favorites"
 import { ArticlesGrid } from "@/components/ArticlesGrid"
+import { ArticlesSkeleton } from "./articlesSkeleton"
 
 export default async function ArticlesPage() {
-    const [articles, favoriteUrls, session] = await Promise.all([
-        getAllArticles(),
-        getUserFavoriteUrls(),
-        getServerSession(authOptions),
-    ])
-
+    const session = await getServerSession(authOptions)
     const role = (session?.user as { role?: string } | undefined)?.role
     const canCreate = role === "admin" || role === "editor"
 
@@ -32,11 +29,22 @@ export default async function ArticlesPage() {
                 )}
             </div>
 
-            {articles.length === 0 ? (
-                <p className="text-zinc-500 text-sm">Impossible de charger les articles.</p>
-            ) : (
-                <ArticlesGrid articles={articles} favoriteUrls={favoriteUrls} />
-            )}
+            <Suspense fallback={<ArticlesSkeleton />}>
+                <ArticlesContent />
+            </Suspense>
         </div>
     )
+}
+
+async function ArticlesContent() {
+    const [articles, favoriteUrls] = await Promise.all([
+        getAllArticles(),
+        getUserFavoriteUrls(),
+    ])
+
+    if (articles.length === 0) {
+        return <p className="text-zinc-500 text-sm">Impossible de charger les articles.</p>
+    }
+
+    return <ArticlesGrid articles={articles} favoriteUrls={favoriteUrls} />
 }

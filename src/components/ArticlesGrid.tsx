@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import type { Article } from "@/services/articles"
@@ -42,6 +42,8 @@ type Props = {
     favoriteUrls: string[]
 }
 
+const ARTICLES_PER_PAGE = 12
+
 function matchesCategory(article: Article, keywords: readonly string[]): boolean {
     if (keywords.length === 0) return true
     const text = `${article.title ?? ""} ${article.description ?? ""}`.toLowerCase()
@@ -50,11 +52,25 @@ function matchesCategory(article: Article, keywords: readonly string[]): boolean
 
 export function ArticlesGrid({ articles, favoriteUrls }: Props) {
     const [activeCategory, setActiveCategory] = useState<CategoryValue>("all")
+    const [page, setPage] = useState(1)
 
     const category = CATEGORIES.find((c) => c.value === activeCategory)!
     const filtered = articles
         .map((article, originalIndex) => ({ article, originalIndex }))
         .filter(({ article }) => matchesCategory(article, category.keywords))
+
+    const totalPages = Math.max(1, Math.ceil(filtered.length / ARTICLES_PER_PAGE))
+    const currentPage = Math.min(page, totalPages)
+    const paginated = filtered.slice((currentPage - 1) * ARTICLES_PER_PAGE, currentPage * ARTICLES_PER_PAGE)
+
+    function handleCategoryChange(value: CategoryValue) {
+        setActiveCategory(value)
+        setPage(1)
+    }
+
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" })
+    }, [currentPage])
 
     return (
         <div>
@@ -63,7 +79,7 @@ export function ArticlesGrid({ articles, favoriteUrls }: Props) {
                 {CATEGORIES.map((cat) => (
                     <button
                         key={cat.value}
-                        onClick={() => setActiveCategory(cat.value)}
+                        onClick={() => handleCategoryChange(cat.value)}
                         className={`text-xs uppercase tracking-widest px-3 py-1.5 rounded border transition-colors ${
                             activeCategory === cat.value
                                 ? "border-zinc-400 text-white bg-zinc-800"
@@ -82,7 +98,7 @@ export function ArticlesGrid({ articles, favoriteUrls }: Props) {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                    {filtered.map(({ article, originalIndex }) => (
+                    {paginated.map(({ article, originalIndex }) => (
                         <div key={originalIndex} className="relative group">
                             <Link
                                 href={`/dashboard/articles/${originalIndex}`}
@@ -139,6 +155,29 @@ export function ArticlesGrid({ articles, favoriteUrls }: Props) {
                 <p className="text-xs text-zinc-600 mt-4 tracking-wide">
                     {filtered.length} article{filtered.length !== 1 ? "s" : ""} trouvé{filtered.length !== 1 ? "s" : ""}
                 </p>
+            )}
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-2 mt-8">
+                    <button
+                        onClick={() => setPage((p) => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                        className="text-xs uppercase tracking-widest px-3 py-1.5 rounded border border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-500 transition-colors disabled:opacity-30 disabled:hover:text-zinc-400 disabled:hover:border-zinc-700 disabled:cursor-not-allowed"
+                    >
+                        Précédent
+                    </button>
+                    <span className="text-xs text-zinc-500 tracking-widest px-2">
+                        Page {currentPage} / {totalPages}
+                    </span>
+                    <button
+                        onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                        disabled={currentPage === totalPages}
+                        className="text-xs uppercase tracking-widest px-3 py-1.5 rounded border border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-500 transition-colors disabled:opacity-30 disabled:hover:text-zinc-400 disabled:hover:border-zinc-700 disabled:cursor-not-allowed"
+                    >
+                        Suivant
+                    </button>
+                </div>
             )}
         </div>
     )

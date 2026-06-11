@@ -3,6 +3,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getAllArticles, fetchFullContent } from "../../../../services/articles"
 import { ArticleSkeleton } from "./articleSkeleton"
+import { ScrollToTopButton } from "@/components/ScrollToTopButton"
 
 export default async function ArticleDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params
@@ -124,6 +125,7 @@ async function ArticleContent({ slug }: { slug: string }) {
                 </div>
 
             </div>
+            <ScrollToTopButton />
         </div>
     )
 }
