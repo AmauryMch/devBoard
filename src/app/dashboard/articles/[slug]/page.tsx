@@ -4,6 +4,7 @@ import { notFound } from "next/navigation"
 import { getAllArticles, fetchFullContent } from "../../../../services/articles"
 import { ArticleSkeleton } from "./articleSkeleton"
 import { ScrollToTopButton } from "@/components/ScrollToTopButton"
+import { ArticleImage } from "@/components/ArticleImage"
 
 export default async function ArticleDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params
@@ -68,8 +69,14 @@ async function ArticleContent({ slug }: { slug: string }) {
 
                 {/* Image */}
                 {article.urlToImage && (
-                    <div className="rounded-md overflow-hidden mb-8 border border-zinc-800/60">
-                        <img src={article.urlToImage} alt="" className="w-full object-cover max-h-64 md:max-h-80" />
+                    <div className="relative rounded-md overflow-hidden mb-8 border border-zinc-800/60 h-64 md:h-80">
+                        <ArticleImage
+                            src={article.urlToImage}
+                            alt={article.title}
+                            sourceName={article.source.name}
+                            sizes="(max-width: 680px) 100vw, 680px"
+                            className="object-cover"
+                        />
                     </div>
                 )}
 

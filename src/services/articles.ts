@@ -41,9 +41,11 @@ export async function getArticles(): Promise<Article[]> {
 
 export async function fetchFullContent(url: string): Promise<string | null> {
     try {
+        // Le contenu d'un article publié est immuable : on le met en cache longtemps
+        // (24 h) pour éviter de re-scraper le site source à chaque visite.
         const res = await fetch(url, {
             headers: { "User-Agent": "Mozilla/5.0 (compatible; NewsReader/1.0)" },
-            next: { revalidate: 3600 },
+            next: { revalidate: 86400 },
         })
         if (!res.ok) return null
         const html = await res.text()

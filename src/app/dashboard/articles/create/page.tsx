@@ -38,6 +38,7 @@ export default function CreateArticlePage() {
                                 src={imagePreview}
                                 alt="Prévisualisation"
                                 fill
+                                unoptimized
                                 className="object-cover"
                                 onError={() => setImageError(true)}
                             />

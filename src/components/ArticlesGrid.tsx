@@ -1,10 +1,10 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import Image from "next/image"
 import Link from "next/link"
 import type { Article } from "@/services/articles"
 import { FavoriteButton } from "./FavoriteButton"
+import { ArticleImage } from "./ArticleImage"
 
 const CATEGORIES = [
     { label: "Tous", value: "all", keywords: [] },
@@ -106,10 +106,10 @@ export function ArticlesGrid({ articles, favoriteUrls }: Props) {
                             >
                                 <div className="relative h-40 overflow-hidden shrink-0">
                                     {article.urlToImage ? (
-                                        <Image
+                                        <ArticleImage
                                             src={article.urlToImage}
                                             alt={article.title}
-                                            fill
+                                            sourceName={article.source.name}
                                             sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
                                             className="object-cover group-hover:scale-105 transition-transform duration-300"
                                         />
