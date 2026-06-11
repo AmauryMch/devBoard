@@ -2,7 +2,7 @@ import withAuth from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
 // Routes réservées aux utilisateurs connectés (rôle "user" minimum)
-const authRoutes = ["/dashboard/parameters"];
+const authRoutes = ["/dashboard/parameters", "/api/favorites"];
 // Routes réservées aux administrateurs
 const adminRoutes = ["/dashboard/users"];
 // Routes réservées aux users et administrateurs
